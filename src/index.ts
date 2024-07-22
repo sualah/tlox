@@ -1,4 +1,8 @@
+import { Scanner } from "Scanner";
 import figlet from "figlet";
+
+export let hadError:boolean = false;
+export let  hadRuntimeError:boolean = false;
 
 const tlox_header = figlet.textSync("TLOX 0.1.0");
 
@@ -42,14 +46,24 @@ async function runPrompt () {
     const prompt = ">> ";
     process.stdout.write(prompt);
     for await (const line of console) {
-      console.log(`You typed: ${line}`);
+    //  console.log(`You typed: ${line}`);
+     // process.stdout.write(prompt);
+      run(line);
       process.stdout.write(prompt);
+      hadError = false;
     }
 }
 
 async function run(source:string) {
-    // Scanner scanner = new Scanner(source);
-    // List<Token> tokens = scanner.scanTokens();
+     let scanner : Scanner = new Scanner(source);
+     let tokens = scanner.scanTokens();
+
+    // console.log('tokens ', tokens)
+            // For now, just print the tokens.
+            for (let token in tokens) {
+                console.log(tokens[token].lexeme);
+            }
+    
     // Parser parser = new Parser(tokens);
     // List<Stmt> statements = parser.parse();
 
