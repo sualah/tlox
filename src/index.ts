@@ -1,5 +1,8 @@
 import { Scanner } from "Scanner";
 import figlet from "figlet";
+import { TokenType } from "tokenType";
+import type { Token } from "tokens";
+import type { RuntimeError } from "types";
 
 export let hadError:boolean = false;
 export let  hadRuntimeError:boolean = false;
@@ -16,7 +19,7 @@ if (args_length > 1) {
     console.log("Usage: tlox [script] ");
     process.exit(64)
 } else if (args_length == 1) {
-    console.log(Bun.argv[2]);
+  //  console.log(Bun.argv[2]);
     await runFile(Bun.argv[2])
 } else {
     try {
@@ -35,8 +38,8 @@ async function runFile(path:string) {
         //run(content);
 
       // Indicate an error in the exit code.
-      //if (hadError) process.exit(65);
-      //if (hadRuntimeError) process.exit(70);
+      if (hadError) process.exit(65);
+      if (hadRuntimeError) process.exit(70);
     } catch (error) {
         console.log(JSON.stringify(error))
     }
@@ -76,4 +79,28 @@ async function run(source:string) {
     // if (hadError) return;
 
     // interpreter.interpret(statements);
+}
+
+
+function  error(line:number,  message:string) {
+    report(line, "", message);
+}
+
+function runtimeError(error: RuntimeError) {
+    console.log(error.getMessage() + "\n[line " + error.token.line + "]");
+    hadRuntimeError = true;
+}
+
+function report(line:number, where:string,
+                           message:string) {
+    console.log("[line " + line + "] Error" + where + ": " + message);
+    hadError = true;
+}
+
+function errorToken (token:Token, message:string) {
+    if (token.type == TokenType.EOF) {
+        report(token.line, " at end", message);
+    } else {
+        report(token.line, " at '" + token.lexeme + "'", message);
+    }
 }
