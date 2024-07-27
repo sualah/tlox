@@ -10,27 +10,30 @@ async function defineAst(outputDir:string, baseName:string, types:string[]) {
   
     writer.write(`import { Token } from "tokens";\n\n`);
    // writer.write(`import { TokenType } from "tokens";\n\n`);
-   await defineVisitor(writer, baseName, types)
 
-    writer.write(`abstract class ${baseName} {\n`);   
-    writer.write(`  abstract accept<R>(visitor: Visitor<R>) : R;\n`);
+    writer.write(`export abstract class ${baseName} {\n`);   
+    writer.write(`  abstract accept<R>(visitor: ${baseName}.Visitor<R>) : R;\n`);
     writer.write(`}\n\n\n`);
+    writer.write(`export namespace ${baseName} {\n\n`);   
+    await defineVisitor(writer, baseName, types)
+
     for (const type of types) {
         let className = type.split("=")[0].trim();
         let fields = type.split("=")[1].trim();
         await defineType(writer, baseName, className, fields);
     }
+    writer.write(`}\n`);   
 
     writer.end();
   }
 
 
 async function defineVisitor(writer: FileSink, baseName: string, types: string[]): Promise<void> {
-    let content = `interface Visitor<R> {\n`;
+    let content = ` export interface Visitor<R> {\n`;
   
     for (const type of types) {
       const typeName = type.split('=')[0].trim();
-      content += `  visit${typeName}${baseName}(${baseName.toLowerCase()}: ${typeName}): R;\n`;
+      content += `      visit${typeName}${baseName}(${baseName.toLowerCase()}: ${typeName}): R;\n`;
     }
   
     content += `}\n\n\n`;
@@ -40,7 +43,7 @@ async function defineVisitor(writer: FileSink, baseName: string, types: string[]
   }
 
   async function defineType(writer: FileSink, baseName: string, className: string, fieldList: string) {
-    let content = `class ${className} extends ${baseName} {\n`;
+    let content = `export class ${className} extends ${baseName} {\n`;
   
     const fields = fieldList.split(', ');
 

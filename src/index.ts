@@ -63,8 +63,8 @@ async function run(source:string) {
 
     // console.log('tokens ', tokens)
             // For now, just print the tokens.
-            for (let token in tokens) {
-                console.log(tokens[token].lexeme);
+            for (let token of tokens) {
+                console.log(token.lexeme);
             }
     
     // Parser parser = new Parser(tokens);

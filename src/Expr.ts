@@ -1,19 +1,21 @@
 import { Token } from "tokens";
 
-export interface Visitor<R> {
-  visitBinaryExpr(expr: Binary): R;
-  visitGroupingExpr(expr: Grouping): R;
-  visitLiteralExpr(expr: Literal): R;
-  visitUnaryExpr(expr: Unary): R;
-}
-
-
 export abstract class Expr {
-  abstract accept<R>(visitor: Visitor<R>) : R;
+  abstract accept<R>(visitor: Expr.Visitor<R>) : R;
 }
 
 
-class Binary extends Expr {
+export namespace Expr {
+
+ export interface Visitor<R> {
+      visitBinaryExpr(expr: Binary): R;
+      visitGroupingExpr(expr: Grouping): R;
+      visitLiteralExpr(expr: Literal): R;
+      visitUnaryExpr(expr: Unary): R;
+}
+
+
+export class Binary extends Expr {
   left: Expr;
   operator: Token;
   right: Expr;
@@ -31,7 +33,7 @@ class Binary extends Expr {
 }
 
 
-class Grouping extends Expr {
+export class Grouping extends Expr {
   expression: Expr;
   constructor(expression: Expr) {
   super(); 
@@ -45,7 +47,7 @@ class Grouping extends Expr {
 }
 
 
-class Literal extends Expr {
+export class Literal extends Expr {
   value: Object;
   constructor(value: Object) {
   super(); 
@@ -59,7 +61,7 @@ class Literal extends Expr {
 }
 
 
-class Unary extends Expr {
+export class Unary extends Expr {
   operator: Token;
   right: Expr;
   constructor(operator: Token, right: Expr) {
@@ -75,3 +77,4 @@ class Unary extends Expr {
 }
 
 
+}
