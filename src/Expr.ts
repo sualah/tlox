@@ -48,8 +48,9 @@ export class Grouping extends Expr {
 
 
 export class Literal extends Expr {
-  value: Object;
-  constructor(value: Object) {
+  value: Object | null;
+
+  constructor(value: Object | null) {
   super(); 
   this.value = value;
  }

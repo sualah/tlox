@@ -1,11 +1,15 @@
+import { AstPrinter } from "AstPrinter";
+import type { Expr } from "Expr";
+import { Lox } from "Lox";
 import { Scanner } from "Scanner";
 import figlet from "figlet";
+import { Parser } from "parser";
 import { TokenType } from "tokenType";
 import type { Token } from "tokens";
 import type { RuntimeError } from "types";
 
-export let hadError:boolean = false;
-export let  hadRuntimeError:boolean = false;
+// export let hadError:boolean = false;
+// export let  hadRuntimeError:boolean = false;
 
 const tlox_header = figlet.textSync("TLOX 0.1.0");
 
@@ -38,8 +42,8 @@ async function runFile(path:string) {
         //run(content);
 
       // Indicate an error in the exit code.
-      if (hadError) process.exit(65);
-      if (hadRuntimeError) process.exit(70);
+      if (Lox.hadError) process.exit(65);
+      if (Lox.hadRuntimeError) process.exit(70);
     } catch (error) {
         console.log(JSON.stringify(error))
     }
@@ -53,7 +57,7 @@ async function runPrompt () {
      // process.stdout.write(prompt);
       run(line);
       process.stdout.write(prompt);
-      hadError = false;
+      Lox.hadError = false;
     }
 }
 
@@ -61,46 +65,32 @@ async function run(source:string) {
      let scanner : Scanner = new Scanner(source);
      let tokens = scanner.scanTokens();
 
-    // console.log('tokens ', tokens)
-            // For now, just print the tokens.
-            for (let token of tokens) {
-                console.log(token.lexeme);
-            }
+            // for (let token of tokens) {
+            //     console.log(token.lexeme);
+            // }
     
-    // Parser parser = new Parser(tokens);
+    let parser:Parser = new Parser(tokens);
+    let expression:Expr | null = parser.parse();
     // List<Stmt> statements = parser.parse();
 
     // // stop if there was a syntax error.
-    // if (hadError) return;
+    if (Lox.hadError) return;
 
+    if (expression !== null ) console.log(new AstPrinter().print(expression))
+    
     // Resolver resolver = new Resolver(interpreter);
     // resolver.resolve(statements);
 
     // if (hadError) return;
 
     // interpreter.interpret(statements);
+
 }
 
 
-function  error(line:number,  message:string) {
-    report(line, "", message);
-}
 
-function runtimeError(error: RuntimeError) {
-    console.log(error.getMessage() + "\n[line " + error.token.line + "]");
-    hadRuntimeError = true;
-}
 
-function report(line:number, where:string,
-                           message:string) {
-    console.log("[line " + line + "] Error" + where + ": " + message);
-    hadError = true;
-}
 
-function errorToken (token:Token, message:string) {
-    if (token.type == TokenType.EOF) {
-        report(token.line, " at end", message);
-    } else {
-        report(token.line, " at '" + token.lexeme + "'", message);
-    }
-}
+
+
+
