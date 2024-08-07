@@ -5,12 +5,11 @@ import type { Token } from "tokens";
 
 class ParseError extends Error {}
 
-export class Parser extends Error {
+export class Parser{
  private tokens: Token[];
  private current: number = 0;
 
  constructor(tokens:Token[]){
-     super();
     this.tokens = tokens
  }
 

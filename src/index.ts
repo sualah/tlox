@@ -75,8 +75,9 @@ async function run(source:string) {
 
     // // stop if there was a syntax error.
     if (Lox.hadError) return;
-
-    if (expression !== null ) console.log(new AstPrinter().print(expression))
+     
+    console.log(expression)
+   // if (expression !== null ) console.log(new AstPrinter().print(expression))
     
     // Resolver resolver = new Resolver(interpreter);
     // resolver.resolve(statements);
