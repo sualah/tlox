@@ -37,9 +37,9 @@ async function runFile(path:string) {
     try {
         const file = Bun.file(path);
         const content = await file.text();
-        console.log(content)
+       // console.log(content)
        // Assuming you have a run function defined elsewhere
-        //run(content);
+        run(content);
 
       // Indicate an error in the exit code.
       if (Lox.hadError) process.exit(65);
@@ -71,12 +71,15 @@ async function run(source:string) {
     
     let parser:Parser = new Parser(tokens);
     let expression:Expr | null = parser.parse();
+
     // List<Stmt> statements = parser.parse();
 
     // // stop if there was a syntax error.
     if (Lox.hadError) return;
      
-    console.log(expression)
+    if(expression) Lox.interpreter.interpret(expression)
+
+   // console.log(expression)
    // if (expression !== null ) console.log(new AstPrinter().print(expression))
     
     // Resolver resolver = new Resolver(interpreter);

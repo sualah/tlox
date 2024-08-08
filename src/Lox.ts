@@ -1,9 +1,11 @@
+import { Interpreter } from "interpreter";
 import { TokenType } from "tokenType";
 import type { Token } from "tokens";
-import type { RuntimeError } from "types";
+import  { RuntimeError } from "types";
 
 
 export class Lox {
+    static interpreter = new Interpreter();
     static hadError:boolean = false;
     static hadRuntimeError:boolean = false;
 
@@ -11,6 +13,7 @@ export class Lox {
         Lox.report(line, "", message);
     }
 
+    
     static  errorToken (token:Token, message:string) {
         if (token.type == TokenType.EOF) {
             Lox.report(token.line, " at end", message);
@@ -20,7 +23,12 @@ export class Lox {
     }
 
     static runtimeError(error: RuntimeError) {
-        console.log(error.getMessage() + "\n[line " + error.token.line + "]");
+        if (error.token) {
+            console.log(error.message + "\n[line " + error.token.line + "]");
+        } else {
+            console.log(error.message + "\n");
+        }
+        
         Lox.hadRuntimeError = true;
     }
 
