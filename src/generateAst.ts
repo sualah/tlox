@@ -76,9 +76,11 @@ async function defineVisitor(writer: FileSink, baseName: string, types: string[]
      writer.write(content);
   }
 
-  defineAst("./src", "Expr", ["Binary   = left: Expr, operator: Token, right: Expr",
-        "Grouping = expression: Expr",
-        "Literal  = value: Object",
-        "Unary    = operator: Token, right: Expr"])
+  // defineAst("./src", "Expr", ["Binary   = left: Expr, operator: Token, right: Expr",
+  //       "Grouping = expression: Expr",
+  //       "Literal  = value: Object",
+  //       "Unary    = operator: Token, right: Expr"])
 
 
+  defineAst("./src", "Stmt", ["Expression   = expression: Expr",
+          "Print = expression: Expr"])
