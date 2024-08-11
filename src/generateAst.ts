@@ -8,8 +8,8 @@ async function defineAst(outputDir:string, baseName:string, types:string[]) {
     const file = Bun.file(path);
     const writer = file.writer();
   
-    writer.write(`import { Token } from "tokens";\n\n`);
-   // writer.write(`import { TokenType } from "tokens";\n\n`);
+    writer.write(`import { Token } from "tokens";\n`);
+    writer.write(`import type { Expr } from "Expr";\n\n`);
 
     writer.write(`export abstract class ${baseName} {\n`);   
     writer.write(`  abstract accept<R>(visitor: ${baseName}.Visitor<R>) : R;\n`);
@@ -76,11 +76,17 @@ async function defineVisitor(writer: FileSink, baseName: string, types: string[]
      writer.write(content);
   }
 
-  // defineAst("./src", "Expr", ["Binary   = left: Expr, operator: Token, right: Expr",
-  //       "Grouping = expression: Expr",
-  //       "Literal  = value: Object",
-  //       "Unary    = operator: Token, right: Expr"])
+  defineAst("./src", "Expr", [
+        "Assign   = name: Token, value: Expr",
+        "Binary = left: Expr, operator: Token, right: Expr",
+        "Grouping = expression: Expr",
+        "Literal  = value: Object",
+        "Unary    = operator: Token, right: Expr",
+        "Variable = name: Token"])
 
 
-  defineAst("./src", "Stmt", ["Expression   = expression: Expr",
-          "Print = expression: Expr"])
+  defineAst("./src", "Stmt", [
+          "Block      = statements:Stmt[]",
+          "Expression = expression: Expr",
+          "Print = expression: Expr",
+          "Var = name: Token, initializer: Expr"])

@@ -1,9 +1,9 @@
-import { AstPrinter } from "AstPrinter";
 import type { Expr } from "Expr";
 import { Lox } from "Lox";
 import { Scanner } from "Scanner";
 import figlet from "figlet";
 import { Parser } from "parser";
+import type { Stmt } from "stmt";
 import { TokenType } from "tokenType";
 import type { Token } from "tokens";
 import type { RuntimeError } from "types";
@@ -70,14 +70,14 @@ async function run(source:string) {
             // }
     
     let parser:Parser = new Parser(tokens);
-    let expression:Expr | null = parser.parse();
+   // let expression:Expr | null = parser.parse();
 
-    // List<Stmt> statements = parser.parse();
+    let statements:Stmt[] = parser.parse();
 
     // // stop if there was a syntax error.
     if (Lox.hadError) return;
      
-    if(expression) Lox.interpreter.interpret(expression)
+    Lox.interpreter.interpret(statements);
 
    // console.log(expression)
    // if (expression !== null ) console.log(new AstPrinter().print(expression))
