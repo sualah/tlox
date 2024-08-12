@@ -160,6 +160,32 @@ export class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<void> {
     this.executeBlock(stmt.statements, new Environment(this.environment));
   }
 
+  visitIfStmt(stmt: Stmt.If) {
+    if (this.isTruthy(this.evaluate(stmt.condition))) {
+      this.execute(stmt.thenBranch);
+    } else if (stmt.elseBranch != null) {
+      this.execute(stmt.elseBranch);
+    }
+    return null;
+  }
+
+  visitLogicalExpr(expr: Expr.Logical): Object {
+    let left: Object = this.evaluate(expr.left);
+    if (expr.operator.type == TokenType.OR) {
+      if (this.isTruthy(left)) return left;
+    } else {
+      if (!this.isTruthy(left)) return left;
+    }
+    return this.evaluate(expr.right);
+  }
+  
+  visitWhileStmt(stmt: Stmt.While) {
+    while (this.isTruthy(this.evaluate(stmt.condition))) {
+      this.execute(stmt.body);
+    }
+    return null;
+  }
+
   executeBlock(statements: Stmt[], environment: Environment) {
     let previous: Environment = this.environment;
     try {
