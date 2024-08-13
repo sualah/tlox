@@ -17,7 +17,7 @@ export class Environment {
     throw new RuntimeError(name, "Undefined variable '" + name.lexeme + "'.");
   }
 
-  define(name: string, value: Object) {
+  define(name: string, value: Object | null) {
     this.values.set(name, value);
   }
 

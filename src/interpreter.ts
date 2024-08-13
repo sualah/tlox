@@ -6,7 +6,7 @@ import { TokenType } from "tokenType";
 import type { Token } from "tokens";
 import { RuntimeError } from "types";
 
-export class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<void> {
+export class Interpreter implements Expr.Visitor<any>, Stmt.Visitor<void> {
   private environment: Environment = new Environment();
 
   interpret(statements: Stmt[]) {
@@ -39,8 +39,8 @@ export class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<void> {
     return object.toString();
   }
 
-  visitBinaryExpr(expr: Expr.Binary): Object {
-    let left: Object = this.evaluate(expr.left);
+  visitBinaryExpr(expr: Expr.Binary): any {
+    let left: Object  = this.evaluate(expr.left);
     let right: Object = this.evaluate(expr.right);
     switch (expr.operator.type) {
       case TokenType.GREATER:
@@ -82,7 +82,7 @@ export class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<void> {
         return Number(left) * Number(right);
     }
 
-    return Object(null);
+    return null;
   }
 
   private checkNumberOperands(operator: Token, left: Object, right: Object) {
@@ -95,17 +95,17 @@ export class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<void> {
     throw new RuntimeError(operator, "Operand must be a number.");
   }
 
-  isEqual(a: Object, b: Object): boolean {
+  isEqual(a: any, b: any): boolean {
     if (a === null && b == null) return true;
     if (a == null) return false;
     return a === b;
   }
 
-  visitGroupingExpr(expr: Expr.Grouping): Object {
+  visitGroupingExpr(expr: Expr.Grouping): any {
     return this.evaluate(expr.expression);
   }
 
-  evaluate(expr: Expr): Object {
+  evaluate(expr: Expr): any {
     return expr.accept(this);
   }
 
@@ -114,17 +114,16 @@ export class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<void> {
     return expr.value;
   }
 
-  visitUnaryExpr(expr: Expr.Unary): Object {
-    let right: Object = this.evaluate(expr.right);
+  visitUnaryExpr(expr: Expr.Unary): any {
+    let right: any = this.evaluate(expr.right);
     switch (expr.operator.type) {
       case TokenType.BANG:
         return !this.isTruthy(right);
       case TokenType.MINUS:
         return -right;
       default:
-        return Object(null);
+        return null;
     }
-    //  return this.parenthesize(expr.operator.lexeme, expr.right);
   }
 
   visitExpressionStmt(stmt: Stmt.Expression) {
@@ -133,13 +132,13 @@ export class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<void> {
   }
 
   visitPrintStmt(stmt: Stmt.Print) {
-    let value: Object = this.evaluate(stmt.expression);
+    let value: any = this.evaluate(stmt.expression);
     console.log(this.stringify(value));
     return null;
   }
 
   visitVarStmt(stmt: Stmt.Var) {
-    let value: Object = Object(null);
+    let value = null;
     if (stmt.initializer != null) {
       value = this.evaluate(stmt.initializer);
     }
@@ -150,7 +149,7 @@ export class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<void> {
     return this.environment.get(expr.name);
   }
 
-  visitAssignExpr(expr: Expr.Assign): Object {
+  visitAssignExpr(expr: Expr.Assign): any {
     let value: Object = this.evaluate(expr.value);
     this.environment.assign(expr.name, value);
     return value;
@@ -169,8 +168,8 @@ export class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<void> {
     return null;
   }
 
-  visitLogicalExpr(expr: Expr.Logical): Object {
-    let left: Object = this.evaluate(expr.left);
+  visitLogicalExpr(expr: Expr.Logical): any {
+    let left: Object  = this.evaluate(expr.left);
     if (expr.operator.type == TokenType.OR) {
       if (this.isTruthy(left)) return left;
     } else {
@@ -178,10 +177,13 @@ export class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<void> {
     }
     return this.evaluate(expr.right);
   }
-  
+
   visitWhileStmt(stmt: Stmt.While) {
+   // console.log('while called ', stmt);
+    console.log(this.evaluate(stmt.condition))
     while (this.isTruthy(this.evaluate(stmt.condition))) {
-      this.execute(stmt.body);
+      // console.log('hello ', stmt.condition)
+     // this.execute(stmt.body);
     }
     return null;
   }
@@ -198,10 +200,10 @@ export class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<void> {
     }
   }
 
-  isTruthy(object: Object): boolean {
+  isTruthy(object: any): boolean {
     if (object == null) return false;
-    if (object instanceof Boolean) return Boolean(object);
-    return true;
+   // console.log('isTruthy ', object)
+    return object;
   }
 
   private parenthesize(name: string, ...exprs: Expr[]): string {

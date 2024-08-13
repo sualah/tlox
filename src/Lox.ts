@@ -15,6 +15,7 @@ export class Lox {
 
     
     static  errorToken (token:Token, message:string) {
+        console.log()
         if (token.type == TokenType.EOF) {
             Lox.report(token.line, " at end", message);
         } else {

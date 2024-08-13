@@ -49,8 +49,8 @@ export class Expression extends Stmt {
 export class If extends Stmt {
   condition: Expr;
   thenBranch: Stmt;
-  elseBranch: Stmt;
-  constructor(condition: Expr, thenBranch: Stmt, elseBranch: Stmt) {
+  elseBranch: Stmt | null;
+  constructor(condition: Expr, thenBranch: Stmt, elseBranch: Stmt | null) {
   super(); 
   this.condition = condition;
   this.thenBranch = thenBranch;
